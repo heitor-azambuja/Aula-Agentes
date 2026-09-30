@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, redirect, request
 
 from app.calculator import simulate_compound_interest
 
@@ -13,9 +13,15 @@ def _payload_value(payload: dict[str, Any], key: str, default: Any = None) -> An
     return payload[key] if key in payload else default
 
 
-def create_app() -> Flask:
+def create_app(*, include_dashboard: bool = False) -> Flask:
     """Cria a aplicação Flask da calculadora."""
     app = Flask(__name__)
+
+    @app.get("/")
+    def index():
+        if include_dashboard:
+            return redirect("/dashboard/")
+        return jsonify({"status": "ok", "service": "compound-interest-calculator"})
 
     @app.post("/api/simulate")
     def simulate():
@@ -33,5 +39,10 @@ def create_app() -> Flask:
             return jsonify({"error": str(exc)}), 400
 
         return jsonify(result)
+
+    if include_dashboard:
+        from app.dashboard import create_dashboard
+
+        create_dashboard(server=app, route_prefix="/dashboard/")
 
     return app
