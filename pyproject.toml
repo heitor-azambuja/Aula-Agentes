@@ -2,6 +2,9 @@
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q"
+filterwarnings = [
+    "ignore:.*dash_table.DataTable.*:DeprecationWarning",
+]
 
 [tool.ruff]
 line-length = 100
