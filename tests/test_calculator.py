@@ -1,5 +1,7 @@
 import math
 
+import pytest
+
 from app.calculator import simulate_compound_interest
 
 
@@ -92,3 +94,45 @@ def test_applies_limited_recurring_withdrawal_period():
         50.0,
         0.0,
     ]
+
+
+def test_rejects_negative_required_amounts():
+    with pytest.raises(ValueError, match="aporte inicial"):
+        simulate_compound_interest(
+            initial_amount=-1,
+            annual_interest_rate=0,
+            duration_months=12,
+            monthly_contribution=0,
+        )
+
+
+def test_rejects_non_positive_duration():
+    with pytest.raises(ValueError, match="tempo"):
+        simulate_compound_interest(
+            initial_amount=1000,
+            annual_interest_rate=0,
+            duration_months=0,
+            monthly_contribution=0,
+        )
+
+
+def test_rejects_one_time_withdrawal_outside_simulation_period():
+    with pytest.raises(ValueError, match="fora do período"):
+        simulate_compound_interest(
+            initial_amount=1000,
+            annual_interest_rate=0,
+            duration_months=3,
+            monthly_contribution=0,
+            one_time_withdrawals=[{"month": 4, "amount": 100}],
+        )
+
+
+def test_rejects_invalid_recurring_withdrawal_frequency():
+    with pytest.raises(ValueError, match="periodicidade"):
+        simulate_compound_interest(
+            initial_amount=1000,
+            annual_interest_rate=0,
+            duration_months=3,
+            monthly_contribution=0,
+            recurring_withdrawals=[{"start_month": 1, "amount": 100, "frequency_months": 0}],
+        )
