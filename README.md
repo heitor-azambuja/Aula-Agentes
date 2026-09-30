@@ -48,6 +48,18 @@ Rode os testes:
 python -m pytest
 ```
 
+Rode o lint:
+
+```bash
+python -m ruff check .
+```
+
+Valide tudo localmente:
+
+```bash
+make check
+```
+
 A aplicação completa será adicionada incrementalmente nas próximas etapas do projeto.
 
 ## Sugestão de estrutura
