@@ -3,7 +3,7 @@ testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q"
 filterwarnings = [
-    "ignore:.*dash_table.DataTable.*:DeprecationWarning",
+    "ignore::DeprecationWarning:dash.development.base_component",
 ]
 
 [tool.ruff]
