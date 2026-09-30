@@ -17,15 +17,8 @@ Novos exemplos, notebooks, scripts ou materiais de aula devem ser adicionados em
 
 ## Pré-requisitos
 
-No estado atual, não há dependências obrigatórias para executar o projeto, pois ainda não existem scripts ou aplicações versionados neste repositório.
-
-Quando forem adicionados exemplos executáveis, documente aqui:
-
-- linguagem e versão necessárias;
-- dependências do projeto;
-- comandos de instalação;
-- variáveis de ambiente, se houver;
-- instruções de execução e testes.
+- Python 3.11 ou superior.
+- `pip` para instalar dependências.
 
 ## Como usar
 
@@ -36,7 +29,26 @@ git clone https://github.com/heitor-azambuja/Aula-Agentes.git
 cd Aula-Agentes
 ```
 
-Leia os materiais disponíveis e acompanhe as instruções específicas de cada diretório ou arquivo adicionado ao projeto.
+Crie e ative um ambiente virtual:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Instale as dependências:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Rode os testes:
+
+```bash
+python -m pytest
+```
+
+A aplicação completa será adicionada incrementalmente nas próximas etapas do projeto.
 
 ## Sugestão de estrutura
 
