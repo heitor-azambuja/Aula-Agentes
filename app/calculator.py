@@ -15,6 +15,49 @@ def _money(value: float) -> float:
     return round(value + 0, 2)
 
 
+def _one_time_withdrawal_for_month(
+    month: int,
+    one_time_withdrawals: list[dict[str, Any]],
+) -> float:
+    return sum(
+        float(withdrawal.get("amount", 0))
+        for withdrawal in one_time_withdrawals
+        if int(withdrawal.get("month", 0)) == month
+    )
+
+
+def _recurring_withdrawal_for_month(
+    month: int,
+    recurring_withdrawals: list[dict[str, Any]],
+) -> float:
+    total = 0.0
+    for withdrawal in recurring_withdrawals:
+        start_month = int(withdrawal.get("start_month", 1))
+        end_month = withdrawal.get("end_month")
+        frequency_months = int(withdrawal.get("frequency_months", 1))
+
+        if month < start_month:
+            continue
+        if end_month is not None and month > int(end_month):
+            continue
+        if (month - start_month) % frequency_months != 0:
+            continue
+
+        total += float(withdrawal.get("amount", 0))
+    return total
+
+
+def _withdrawal_for_month(
+    month: int,
+    one_time_withdrawals: list[dict[str, Any]],
+    recurring_withdrawals: list[dict[str, Any]],
+) -> float:
+    return _one_time_withdrawal_for_month(
+        month,
+        one_time_withdrawals,
+    ) + _recurring_withdrawal_for_month(month, recurring_withdrawals)
+
+
 def simulate_compound_interest(
     *,
     initial_amount: float,
@@ -28,10 +71,9 @@ def simulate_compound_interest(
 
     A taxa anual é interpretada como taxa anual efetiva em percentual. A simulação
     aplica, em cada mês: saldo inicial, aporte mensal, retiradas e juros do mês.
-    Retiradas serão implementadas em uma etapa posterior; os parâmetros já existem
-    para manter a assinatura estável.
     """
-    del one_time_withdrawals, recurring_withdrawals
+    one_time_withdrawals = one_time_withdrawals or []
+    recurring_withdrawals = recurring_withdrawals or []
 
     monthly_rate = _monthly_rate_from_effective_annual_rate(annual_interest_rate)
     balance = float(initial_amount)
@@ -43,9 +85,12 @@ def simulate_compound_interest(
     for month in range(1, int(duration_months) + 1):
         beginning_balance = balance
         contribution = float(monthly_contribution)
-        withdrawal = 0.0
+        withdrawal = _withdrawal_for_month(month, one_time_withdrawals, recurring_withdrawals)
+
         balance += contribution
         total_contributed += contribution
+        balance -= withdrawal
+        total_withdrawn += withdrawal
 
         interest = balance * monthly_rate
         balance += interest
