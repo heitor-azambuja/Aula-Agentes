@@ -1,0 +1,4 @@
+Flask>=3.0
+Dash>=2.17
+plotly>=5.20
+pytest>=8.0
